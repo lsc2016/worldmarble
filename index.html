@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14213d">
+  <title>World Marble</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="logo" class="logo" title="첫 화면으로"><span class="logo-globe">🌐</span><span class="logo-text">WORLD<b>MARBLE</b></span></button>
+    <div class="menu-wrap">
+      <button id="menuBtn" class="icon-btn" aria-label="메뉴" aria-haspopup="true">☰</button>
+      <div id="menu" class="menu" hidden>
+        <button data-act="rules">📖 규칙 보기</button>
+        <button data-act="settings">⚙️ 설정</button>
+        <button data-act="save" class="in-game">💾 저장하기</button>
+        <button data-act="home">🏠 첫 화면으로</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. 첫 화면 -->
+    <section id="screen-title" class="screen">
+      <div class="title-card">
+        <div class="title-logo"><span class="title-globe">🌐</span><h1>WORLD<b>MARBLE</b></h1></div>
+        <p class="tagline">주사위 굴려 세계 도시를 사고, 건물을 올리자!</p>
+        <div class="title-buttons">
+          <button id="btnNew" class="btn primary big">새 게임</button>
+          <button id="btnContinue" class="btn big">이어하기</button>
+          <button id="btnRules" class="btn ghost">규칙 보기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 새 게임 설정 -->
+    <section id="screen-setup" class="screen" hidden>
+      <div class="setup-card">
+        <h2>새 게임</h2>
+        <div class="field">
+          <label>인원</label>
+          <div class="seg" id="countSeg">
+            <button data-n="2">2명</button><button data-n="3">3명</button><button data-n="4">4명</button>
+          </div>
+        </div>
+        <div id="playerRows" class="player-rows"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="startMoney">시작 돈</label>
+            <select id="startMoney">
+              <option value="200">200만</option>
+              <option value="300" selected>300만</option>
+              <option value="500">500만</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="maxTurns">끝나는 턴 수</label>
+            <select id="maxTurns">
+              <option value="15">15턴</option>
+              <option value="20">20턴</option>
+              <option value="30" selected>30턴</option>
+              <option value="50">50턴</option>
+              <option value="0">끝까지 (한 명 남을 때까지)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setup-actions">
+          <button id="btnSetupBack" class="btn ghost">뒤로</button>
+          <button id="btnStart" class="btn primary big">게임 시작</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 게임 화면 -->
+    <section id="screen-game" class="screen" hidden>
+      <div class="game-layout">
+        <div class="players" id="playersA"></div>
+        <div class="board-wrap">
+          <div id="board" class="board">
+            <div class="center">
+              <div class="turn-label" id="turnLabel"></div>
+              <div class="dice" id="dice">
+                <div class="die" data-v="1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="die" data-v="1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <button id="rollBtn" class="roll-btn" disabled>🎲 굴리기</button>
+              <div class="fund" id="fundLabel"></div>
+              <ul class="log" id="log"></ul>
+            </div>
+            <div id="tokens" class="tokens"></div>
+            <div id="overlay" class="overlay" hidden><div class="pop" id="pop"></div></div>
+            <div id="banner" class="banner" hidden></div>
+          </div>
+        </div>
+        <div class="players" id="playersB"></div>
+      </div>
+    </section>
+
+    <!-- 4. 결과 화면 -->
+    <section id="screen-result" class="screen" hidden>
+      <div class="result-card">
+        <h2>🏆 게임 결과</h2>
+        <p id="resultSub" class="muted"></p>
+        <ol id="resultList" class="result-list"></ol>
+        <div class="setup-actions">
+          <button id="btnResultHome" class="btn ghost">첫 화면</button>
+          <button id="btnResultAgain" class="btn primary">새 게임</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 공용 대화창 (규칙, 설정, 확인, 도시 정보) -->
+  <div id="dialog" class="dialog" hidden>
+    <div class="dialog-box">
+      <div id="dialogBody"></div>
+      <div id="dialogBtns" class="btns"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
