@@ -22,7 +22,16 @@
       try {
         if (state) localStorage.setItem(SAVE_KEY, JSON.stringify(state));
         else localStorage.removeItem(SAVE_KEY);
-      } catch { /* 저장 공간 없음: 무시 */ }
+        return true;
+      } catch { return false; /* 저장 공간 없음 */ }
+    },
+    /* 이어하기 전에 필요한 칸이 있는지만 본다 (옛 판·깨진 저장 거르기) */
+    usable(s) {
+      return !!s && typeof s === 'object' && s.version === 1 &&
+        Array.isArray(s.players) && s.players.length >= 2 &&
+        Array.isArray(s.tiles) && Array.isArray(s.deck) && Array.isArray(s.log) &&
+        Number.isFinite(s.round) && Number.isFinite(s.current) &&
+        s.current >= 0 && s.current < s.players.length;
     },
     prefs() { try { return JSON.parse(localStorage.getItem(PREF_KEY)) || {}; } catch { return {}; } },
     setPrefs(p) { try { localStorage.setItem(PREF_KEY, JSON.stringify(p)); } catch { } },
@@ -191,7 +200,13 @@
 
   /* ---------- 첫 화면 / 결과 ---------- */
   $('#btnNew').onclick = openSetup;
-  $('#btnContinue').onclick = () => { const s = Store.load(); if (s) startGame(s); };
+  $('#btnContinue').onclick = async () => {
+    const s = Store.load();
+    if (!s) return;
+    if (Store.usable(s)) { startGame(s); return; }
+    await Dialog.show('<h3>저장이 깨졌어요</h3><p>이어할 수 없어 새로 시작합니다.</p>', [['확인', true, 'primary']]);
+    openSetup();
+  };
   $('#btnRules').onclick = showRules;
   $('#btnResultHome').onclick = () => show('screen-title');
   $('#btnResultAgain').onclick = openSetup;
@@ -214,7 +229,10 @@
     if (act === 'rules') showRules();
     if (act === 'settings') showSettings();
     if (act === 'save') {
-      Store.save(lastSnapshot);
+      if (!Store.save(lastSnapshot)) {
+        Dialog.show('<h3>저장하지 못했습니다</h3><p>브라우저 저장 공간이 없거나 막혀 있습니다. 게임은 그대로 계속할 수 있습니다.</p>', [['확인', true, 'primary']]);
+        return;
+      }
       Dialog.show('<h3>💾 저장했습니다</h3><p>이번 차례가 시작될 때의 상태로 저장됩니다. 게임은 차례마다 자동으로도 저장됩니다.</p>', [['확인', true, 'primary']]);
     }
     if (act === 'home') goHome();
